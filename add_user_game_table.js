@@ -1,3 +1,12 @@
+var mysql = require('mysql');
+var con = mysql.createConnection({
+  multipleStatements: true,
+  host:'localhost',
+  user:'root',
+  password:'UIuc7355608!!',
+  database:'steamining_main'
+});
+
 const fetch = require('node-fetch')
 
 function APIGetPlayerSummaries(key,steamid) {
@@ -25,7 +34,20 @@ function insert_to_user_game_table(responseOne, responseTwo){
   console.log("Are we ok with GetPlayerSummaries?:",responseOne!=null);
   console.log("Are we ok with GetPlayerSummaries?:",responseTwo!=null);
 
-  
+  var sql = "";
+  username = responseOne.response.players[0].personaname;
+  steamId64 = responseOne.response.players[0].steamid;
+  for (var i = 0; i < responseTwo.response.games.length; i++){
+    sql+= "INSERT INTO STEAMINING_MAIN.USER_GAME(SteamId64, UserName, GameId, PlayTime) values (\'"+steamId64+"\',\'"+username+"\',"+responseTwo.response.games[i].appid+","+responseTwo.response.games[i].playtime_forever+");"
+  }
+
+  console.log(sql);
+  con.connect(function(err) {
+    if (err) throw err;
+    console.log("Trying to add a new user into our database.");
+    con.query(sql, function (err, result) { if (err) throw err; });
+  });
+
 }
 
 
