@@ -11,7 +11,7 @@ app.get('/',(req,res)=>{
 
 app.get('/add_into_database',(req,res)=>{
   const{ steamid } = req.query;
-  users_table.API_users_add_into_database(steamid);
+  users_table.API_users_add(steamid);
   res.send("You are added!");
 })
 

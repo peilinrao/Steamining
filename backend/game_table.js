@@ -1,14 +1,11 @@
 /*
-API_users_add:
+API_update_game:
 @ CREATOR: Peilin Rao
-@ DESCRIPTION: loads the user's information into our database
-@ INPUT: user's steamid64
-@ OUTPUT: none
-@ EFFECT: add tuples in USER_GAME table
+@ DESCRIPTION:
+@ INPUT:
+@ OUTPUT:
+@ EFFECT:
 @ COMPONENTS:
-    APIGetPlayerSummaries: call steam's GetPlayerSummaries API
-    APIGetOwnedGames: call steam's GetOwnedGames API
-    insert_to_user_game_table: construct SQL query and connect to our SQL.
 @ NOTE:
     create associated sql table using:
     CREATE TABLE STEAMINING_MAIN.USERS(
@@ -20,7 +17,7 @@ API_users_add:
     );
 */
 module.exports = {
-  API_users_add: function (steamid){
+  API_update_game: function (steamid){
     var mysql = require('mysql');
     var con = mysql.createConnection({
       multipleStatements: true,
