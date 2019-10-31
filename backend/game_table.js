@@ -1,5 +1,5 @@
 /*
-API_update_game:
+API_get_game:
 @ CREATOR: Peilin Rao
 @ DESCRIPTION:
 @ INPUT:
@@ -17,7 +17,7 @@ API_update_game:
     );
 */
 module.exports = {
-  API_update_game: function (steamid){
+  API_get_game: function (){
     var mysql = require('mysql');
     var con = mysql.createConnection({
       multipleStatements: true,
@@ -27,16 +27,16 @@ module.exports = {
       database:'steamining_main'
     });
     const fetch = require('node-fetch')
-    function APIGetPlayerSummaries(key,steamid) {
-      return fetch("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key="+key+"&steamids="+steamid+"&format=json")
+    function APIGetAllGameIDs() {
+      return fetch("http://api.steampowered.com/ISteamApps/GetAppList/v2")
              .then(res => res.json());
     }
-    function APIGetOwnedGames(key,steamid) {
-      return fetch("https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key="+key+"&steamid="+steamid+"&format=json") // Call the fetch function passing the url of the API as a parameter
-      .then((resp) => resp.json())
+    function APIGetAppInfor(appid) {
+      return fetch("https://steamspy.com/api.php?request=appdetails&appid="+appid)
+             .then(res => res.json());
     }
 
-    function insert_to_users_table(responseOne, responseTwo){
+    function insert_to_game_table(responseOne, responseTwo){
       console.log("Sanity check:")
       console.log("Are we ok with GetPlayerSummaries?:",responseOne!=null);
       console.log("Are we ok with GetPlayerSummaries?:",responseTwo!=null);
@@ -54,7 +54,7 @@ module.exports = {
       console.log(sql);
       con.connect(function(err) {
         if (err) throw err;
-        console.log("Trying to add a new user into our database.");
+        console.log("Trying to add a new game into our database.");
         con.query(sql, function (err, result) { if (err) throw err; console.log("Successfully added");});
       });
 
