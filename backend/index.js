@@ -11,7 +11,7 @@ var con = mysql.createConnection({
   multipleStatements: true,
   host:'localhost',
   user:'root',
-  password:'password',
+  password:'UIuc7355608!!',
   database:'STEAMINING_MAIN'
 });
 
