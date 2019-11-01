@@ -16,7 +16,7 @@ API_users_add:
     UserName VARCHAR(100) NOT NULL,
     GameId INT,
     PlayTime INT,
-    PRIMARY KEY(SteamId64, UserName, GameId)
+    PRIMARY KEY(SteamId64, GameId)
     );
 */
 module.exports = {

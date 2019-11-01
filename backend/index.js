@@ -1,4 +1,5 @@
 var users_table = require('./users_table');
+var games_table = require('./games_table');
 
 const express = require('express');
 const cors = require('cors');
@@ -15,11 +16,14 @@ var con = mysql.createConnection({
 });
 
 con.connect(err => {if(err) {return err;}})
-//
 app.use(cors());
 
 app.get('/',(req,res)=>{
   res.send('hello from the other side (backend)');
+});
+
+app.get('/testing_game_table',(req,res)=>{
+  games_table.API_get_games();
 });
 
 app.get('/add_into_database',(req,res)=>{
