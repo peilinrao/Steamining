@@ -1,29 +1,36 @@
 /*
-API_get_game:
-@ CREATOR: Peilin Rao
-@ DESCRIPTION:
-@ INPUT:
-@ OUTPUT:
-@ EFFECT:
-@ COMPONENTS:
-@ NOTE:
+  users_table.js
+  @ CREATOR: Peilin Rao
+  @ DESCRIPTION: contains all the APIs related to games_table
+  @ COMPONENTS:
+  @ NOTE:
     CREATE TABLE STEAMINING.GAMES(
-    appid INT NOT NULL,
-    developer VARCHAR(50),
-    publisher VARCHAR(50),
-    positive INT,
-    negative INT,
-    owners VARCHAR(100),
-    average_forever INT,
-    price INT,
-    init_price INT,
-    discount INT,
-    tag  VARCHAR(50) NOT NULL,
-    tag_weight INT,
-    PRIMARY KEY(appid, tag)
+      appid INT NOT NULL,
+      developer VARCHAR(50),
+      publisher VARCHAR(50),
+      positive INT,
+      negative INT,
+      owners VARCHAR(100),
+      average_forever INT,
+      price INT,
+      init_price INT,
+      discount INT,
+      tag  VARCHAR(50) NOT NULL,
+      tag_weight INT,
+      PRIMARY KEY(appid, tag)
     );
 */
 module.exports = {
+  /*
+  API_get_game:
+  @ CREATOR: Peilin Rao
+  @ DESCRIPTION: Add games in games table, should be occasionally called.
+  @ INPUT:
+  @ OUTPUT:
+  @ EFFECT:
+  @ COMPONENTS:
+  @ NOTE:
+  */
   API_get_games: function (){
     var mysql = require('mysql');
     var con = mysql.createConnection({
@@ -48,7 +55,8 @@ module.exports = {
     async function insert_to_game_table(listOfAll){
       var sql = "";
       appid_list = listOfAll.applist.apps;
-      for (var i = 0; i < 20; i++){
+      // Only add 20 for testing, should change to all
+      for (var i = 0; i < 200; i++){
         curr_appid = appid_list[i].appid;
         console.log("requested:"+curr_appid);
         await APIGetAppInfo(curr_appid).then(function(result){

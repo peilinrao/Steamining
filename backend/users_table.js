@@ -1,16 +1,9 @@
 /*
-API_users_add:
-@ CREATOR: Peilin Rao
-@ DESCRIPTION: loads the user's information into our database
-@ INPUT: user's steamid64
-@ OUTPUT: none
-@ EFFECT: add tuples in USER_GAME table
-@ COMPONENTS:
-    APIGetPlayerSummaries: call steam's GetPlayerSummaries API
-    APIGetOwnedGames: call steam's GetOwnedGames API
-    insert_to_user_game_table: construct SQL query and connect to our SQL.
-@ NOTE:
-    create associated sql table using:
+  users_table.js
+  @ CREATOR: Peilin Rao
+  @ DESCRIPTION: contains all the APIs related to users_table
+  @ COMPONENTS:
+  @ NOTE: create associated sql table using:
     CREATE TABLE STEAMINING_MAIN.USERS(
     SteamId64 VARCHAR(17) NOT NULL,
     UserName VARCHAR(100) NOT NULL,
@@ -19,7 +12,20 @@ API_users_add:
     PRIMARY KEY(SteamId64, GameId)
     );
 */
+
 module.exports = {
+  /*
+  API_users_add:
+  @ CREATOR: Peilin Rao
+  @ DESCRIPTION: loads the user's information into our database
+  @ INPUT: user's steamid64
+  @ OUTPUT: none
+  @ EFFECT: add tuples in USER_GAME table
+  @ COMPONENTS:
+      APIGetPlayerSummaries: call steam's GetPlayerSummaries API
+      APIGetOwnedGames: call steam's GetOwnedGames API
+      insert_to_user_game_table: construct SQL query and connect to our SQL.
+  */
   API_users_add: function (steamid){
     var mysql = require('mysql');
     var con = mysql.createConnection({
@@ -62,7 +68,6 @@ module.exports = {
       });
 
     }
-
     key = "AA7FA6275849EC957DF95C8DE0945CB7";
     APIGetOwnedGames(key,steamid)
     .then(responseTwo => {
@@ -73,7 +78,16 @@ module.exports = {
     });
   },
 
-  //all its functionality is already covered in API_users_add
+  /*
+  API_users_add:
+  @ CREATOR: Peilin Rao
+  @ DESCRIPTION: update the user's information into our database
+  @ INPUT: user's steamid64
+  @ OUTPUT: none
+  @ EFFECT: update tuples in USER_GAME table
+  @ COMPONENTS:
+  @ NOTE: It will NEVER be called because all its functionality is already covered in API_users_add
+  */
   API_users_update: function (steamid){
     var mysql = require('mysql');
     var con = mysql.createConnection({
@@ -126,6 +140,15 @@ module.exports = {
     });
   },
 
+  /*
+  API_users_add:
+  @ CREATOR: Peilin Rao
+  @ DESCRIPTION: delete the user's information into our database
+  @ INPUT: user's steamid64
+  @ OUTPUT: none
+  @ EFFECT: delete tuples in USER_GAME table
+  @ COMPONENTS:
+  */
   API_users_delete: function (steamid){
     var mysql = require('mysql');
     var con = mysql.createConnection({

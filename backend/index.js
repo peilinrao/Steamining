@@ -1,5 +1,6 @@
 var users_table = require('./users_table');
 var games_table = require('./games_table');
+var visitors_table = require('./visitors_table');
 
 const express = require('express');
 const cors = require('cors');
@@ -18,12 +19,15 @@ var con = mysql.createConnection({
 con.connect(err => {if(err) {return err;}})
 app.use(cors());
 
+
 app.get('/',(req,res)=>{
   res.send('hello from the other side (backend)');
 });
 
 app.get('/test_apt_getgames',(req,res)=>{
+  res.send("Updating game table");
   games_table.API_get_games();
+  res.send("Updated game table!");
 });
 
 app.get('/add_into_database',(req,res)=>{
@@ -54,8 +58,8 @@ app.get('/search', (req, res) => {
     }
   });
 })
-
-
+//games_table.API_get_games();
+visitors_table.API_total_games("76561198269300487");
 app.listen(4000,()=>{
   console.log('backend listening on 4000');
 })

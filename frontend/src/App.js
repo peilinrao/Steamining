@@ -58,7 +58,7 @@ class App extends Component {
 
         {this.state.usergames.map((Person, Index) =>
           <div>
-            {Index == 0 && <div><p>UserName: {Person.UserName}</p></div>}
+            {Index === 0 && <div><p>UserName: {Person.UserName}</p></div>}
             <p>GameId: {Person.GameId} PlayTime: {Person.PlayTime}</p>
           </div>
         )}
