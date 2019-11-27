@@ -55,8 +55,9 @@ module.exports = {
     async function insert_to_game_table(listOfAll){
       var sql = "";
       appid_list = listOfAll.applist.apps;
-      // Only add 20 for testing, should change to all
-      for (var i = 0; i < 200; i++){
+      // Only add 20 for testing, should change to appid_list.length
+
+      for (var i = 0; i < 2000; i++){
         curr_appid = appid_list[i].appid;
         console.log("requested:"+curr_appid);
         await APIGetAppInfo(curr_appid).then(function(result){
@@ -75,8 +76,6 @@ module.exports = {
           // ON DUPLICATE KEY UPDATE PlayTime = "+responseTwo.response.games[i].playtime_forever+";"
         });
       }
-
-      console.log("sql:",sql);
       con.connect(function(err) {
         if (err) throw err;
         console.log("Trying to add a new game into our database.");
