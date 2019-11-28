@@ -59,7 +59,7 @@ app.get('/search', (req, res) => {
   });
 })
 //games_table.API_get_games();
-visitors_table.API_total_games("76561198269300487");
+//visitors_table.API_total_games("76561198269300487");
 app.listen(4000,()=>{
   console.log('backend listening on 4000');
 })
