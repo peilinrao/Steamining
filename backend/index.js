@@ -50,7 +50,7 @@ app.get('/update_database',(req,res)=>{
 
 app.get('/search', (req, res) => {
   const {steamid} = req.query;
-  const VIEW_GAMES_FOR_ID_QUERY = "SELECT * FROM STEAMINING.USERS WHERE SteamId64 = " + steamid + ";"
+  const VIEW_GAMES_FOR_ID_QUERY = "SELECT COUNT(GameId) FROM STEAMINING.USERS WHERE SteamId64 = " + steamid + " GROUP BY SteamId64; SELECT SUM(PlayTime) FROM STEAMINING.USERS WHERE SteamId64 = " + steamid + " GROUP BY SteamId64;"
   con.query(VIEW_GAMES_FOR_ID_QUERY, (err, results) => {
     if(err) {return res.send(err)}
     else {
