@@ -4,21 +4,22 @@
   @ DESCRIPTION: contains all the APIs related to games_table
   @ COMPONENTS:
   @ NOTE:
-    CREATE TABLE STEAMINING.GAMES(
-      appid INT NOT NULL,
-      developer VARCHAR(50),
-      publisher VARCHAR(50),
-      positive INT,
-      negative INT,
-      owners VARCHAR(100),
-      average_forever INT,
-      price INT,
-      init_price INT,
-      discount INT,
-      tag  VARCHAR(50) NOT NULL,
-      tag_weight INT,
-      PRIMARY KEY(appid, tag)
-    );
+  CREATE TABLE STEAMINING.GAMES(
+    appid INT NOT NULL,
+    name VARCHAR(100),
+    developer VARCHAR(50),
+    publisher VARCHAR(50),
+    positive INT,
+    negative INT,
+    owners VARCHAR(100),
+    average_forever INT,
+    price INT,
+    init_price INT,
+    discount INT,
+    tag  VARCHAR(50) NOT NULL,
+    tag_weight INT,
+    PRIMARY KEY(appid, tag)
+);
 */
 module.exports = {
   /*
@@ -31,7 +32,7 @@ module.exports = {
   @ COMPONENTS:
   @ NOTE:
   */
-  API_get_games: function (){
+  API_get_games: function (steamid){
     var mysql = require('mysql');
     var con = mysql.createConnection({
       multipleStatements: true,
@@ -42,10 +43,11 @@ module.exports = {
     });
     const fetch = require('node-fetch')
 
-    function APIGetAllGameIDs() {
-      return fetch("http://api.steampowered.com/ISteamApps/GetAppList/v2")
-             .then(res => res.json());
+    function APIGetOwnedGames(key,steamid) {
+      return fetch("https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key="+key+"&steamid="+steamid+"&format=json") // Call the fetch function passing the url of the API as a parameter
+      .then((resp) => resp.json())
     }
+
     function APIGetAppInfo(appid) {
       return fetch("https://steamspy.com/api.php?request=appdetails&appid="+appid)
              .then(res => res.json())
@@ -54,26 +56,24 @@ module.exports = {
 
     async function insert_to_game_table(listOfAll){
       var sql = "";
-      appid_list = listOfAll.applist.apps;
-      // Only add 20 for testing, should change to appid_list.length
-
-      for (var i = 0; i < 2000; i++){
+      console.log(listOfAll);
+      appid_list = listOfAll.response.games;
+      //appid_list.length
+      for (var i = 0; i < appid_list.length ; i++){
+        console.log("Progress:",i)
         curr_appid = appid_list[i].appid;
         console.log("requested:"+curr_appid);
         await APIGetAppInfo(curr_appid).then(function(result){
           if (Object.keys(result.tags).length != 0){
             for(var t = 0; t < Object.keys(result.tags).length; t++){
-              sql += "INSERT INTO STEAMINING.GAMES(appid, developer, publisher,positive, negative,"+
+              sql += "INSERT IGNORE INTO STEAMINING.GAMES(appid,name, developer, publisher,positive, negative,"+
               "owners, average_forever, price, init_price, discount, tag, tag_weight)"+
-              "values (\""+result.appid+"\",\""+result.developer+"\", \""+result.publisher+"\", "+result.positive+", "+result.negative+", \""+result.owners+"\", "+
+              "values (\""+result.appid+"\",\""+result.name+"\",\""+result.developer+"\", \""+result.publisher+"\", "+result.positive+", "+result.negative+", \""+result.owners+"\", "+
               result.average_forever+", "+result.price+","+
               result.initialprice+","+result.discount+",\""+Object.keys(result.tags)[t]+"\","+result.tags[Object.keys(result.tags)[t]]+");"
-
-              console.log("sql appended:",sql);
-
             }
           }
-          // ON DUPLICATE KEY UPDATE PlayTime = "+responseTwo.response.games[i].playtime_forever+";"
+          //ON DUPLICATE KEY UPDATE tag_weight = "+result.tags[Object.keys(result.tags)[t]]+";"
         });
       }
       con.connect(function(err) {
@@ -84,6 +84,7 @@ module.exports = {
 
     }
 
-    APIGetAllGameIDs().then(listOfAll => insert_to_game_table(listOfAll));
+    key = "AA7FA6275849EC957DF95C8DE0945CB7";
+    APIGetOwnedGames(key,steamid).then(listOfAll => insert_to_game_table(listOfAll));
   }
 };

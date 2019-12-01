@@ -110,7 +110,7 @@ module.exports = {
     function insert_to_users_table(responseOne, responseTwo){
       console.log("Sanity check:")
       console.log("Are we ok with GetPlayerSummaries?:",responseOne!=null);
-      console.log("Are we ok with GetPlayerSummaries?:",responseTwo!=null);
+      console.log("Are we ok with GetOwnedGames?:",responseTwo!=null);
 
       var sql = "";
       username = responseOne.response.players[0].personaname;

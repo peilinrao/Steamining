@@ -10,6 +10,17 @@ import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
 
+import { makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
+import PieChart from 'react-minimal-pie-chart';
+
+import BarChart from 'react-bar-chart';
+
 const styles = theme => ({
   root: {
     padding: '20px 20px',
@@ -18,6 +29,27 @@ const styles = theme => ({
     width: 300,
   },
 });
+
+function createData(name, time) {
+  return { name, time };
+}
+
+const rows = [
+  createData('game1', 100),
+  createData('game2', 50),
+  createData('game3', 20),
+  createData('game4', 10),
+  createData('game5', 5),
+];
+
+const data = [
+  {text: '0-20', value: 200},
+  {text: '20-40', value: 400},
+  {text: '40-60', value: 400},
+  {text: '60+', value: 200},
+];
+
+const margin = {top: 20, right: 20, bottom: 30, left: 40};
 
 class App extends Component {
   state = {
@@ -38,19 +70,19 @@ class App extends Component {
     }
   }
 
-  insert_data = () => {
-    console.log(this.state.steamid)
-    fetch('http://localhost:4000/add_into_database?steamid=' + this.state.steamid)
-    .then(response => response.json())
-    .then(response => this.setState({usergames: response.data}))
-    .catch(err => console.log(err))
-    console.log(this.state.usergames[0])
-    if (this.state.usergames === undefined) {
-      this.setState({invalidInput: true})
-    } else {
-      this.setState({invalidInput: false})
-    }
-  }
+  // insert_data = () => {
+  //   console.log(this.state.steamid)
+  //   fetch('http://localhost:4000/add_into_database?steamid=' + this.state.steamid)
+  //   .then(response => response.json())
+  //   .then(response => this.setState({usergames: response.data}))
+  //   .catch(err => console.log(err))
+  //   console.log(this.state.usergames[0])
+  //   if (this.state.usergames === undefined) {
+  //     this.setState({invalidInput: true})
+  //   } else {
+  //     this.setState({invalidInput: false})
+  //   }
+  // }
 
   // delete_data = () => {
   //   console.log(this.state.steamid)
@@ -66,37 +98,35 @@ class App extends Component {
   //   }
   // }
   //
-  // update_data = () => {
-  //   console.log(this.state.steamid)
-  //   fetch('http://localhost:4000/update_database?steamid=' + this.state.steamid)
-  //   .then(response => response.json())
-  //   .then(response => this.setState({usergames: response.data}))
-  //   .catch(err => console.log(err))
-  //   console.log(this.state.usergames[0])
-  //   if (this.state.usergame === undefined) {
-  //     this.setState({invalidInput: true})
-  //   } else {
-  //     this.setState({invalidInput: false})
-  //   }
-  // }
+  update_data = () => {
+    console.log(this.state.steamid)
+    fetch('http://localhost:4000/update_database?steamid=' + this.state.steamid)
+    .catch(err => console.log(err))
+  }
 
-  /*<button onClick={this.insert_data}>Add</button>
-  <button onClick={this.delete_data}>Delete</button>
-  <button onClick={this.update_data}>Update</button>*/
   render() {
     const {steamid} = this.state
     const { classes } = this.props;
-    this.game_num = 0
-    this.play_time = 0
-    //this.state.usergame !== undefined
+    this.game_num = ""
+    this.play_time = ""
+    this.worth = ""
+    this.table = []
+    //this.state.usergames.length !== 0
     if(true){
       console.log(this.state)
+      if(this.state.usergames.length !== 0){
+        this.game_num = (parseFloat(this.state.usergames[0]["0"]["COUNT(GameId)"])).toString()
+        this.play_time = (parseFloat(this.state.usergames[1]["0"]["SUM(PlayTime)"])/60.0).toFixed(2).toString()+"h"
+        this.worth = "$"+(parseFloat(this.state.usergames[2]["0"]["SUM(G.price)"])/100.0).toFixed(2).toString()
+        var i;
+        for (i = 0; i < this.state.usergames[3].length; i++) {
+          var myname = this.state.usergames[3][i]["name"]
+          var myplaytime =  (parseFloat(this.state.usergames[3][i]["PlayTime"])/60).toFixed(2) + "h"
 
-      if(this.state.usergames[0]!== undefined){
-        console.log(this.state.usergames[0]["0"]["COUNT(GameId)"])
-        this.game_num = parseFloat(this.state.usergames[0]["0"]["COUNT(GameId)"])
-        console.log(this.state.usergames[1]["0"]["SUM(PlayTime)"])
-        this.play_time = parseFloat(this.state.usergames[1]["0"]["SUM(PlayTime)"])/60.0
+          this.table.push(createData(myname, myplaytime))
+        }
+
+        console.log(this.table)
       }
 
       return (
@@ -113,6 +143,9 @@ class App extends Component {
             </div>
             <div id="search_button_2" >
               <Button id="search_button_2_detail" variant="contained" color="primary" onClick={this.game_data}>Search</Button>
+            </div>
+            <div id="update_button_2" >
+              <Button id="update_button_2_detail" variant="contained" color="primary" onClick={this.update_data}>Update</Button>
             </div>
             <div id="avatar">
               <Avatar alt="Photo" src="./pure.png" />
@@ -143,9 +176,45 @@ class App extends Component {
                   Total Worth:
                 </Typography>
                 <Typography component="p">
-
+                  {this.worth}
                 </Typography>
               </Paper>
+            </div>
+            <p></p>
+            <div id="favorite_game">
+              <Table className={classes.table} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Mostly Played</TableCell>
+                    <TableCell align="right">Time</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {this.table.map(row => (
+                    <TableRow key={row.name}>
+                      <TableCell component="th" scope="row">{row.name}</TableCell>
+                      <TableCell align="right">{row.time}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <div id="PieChart">
+              <PieChart radius={40}
+                data={[
+                  { title: 'One', value: 10, color: '#E38627' },
+                  { title: 'Two', value: 15, color: '#C13C37' },
+                  { title: 'Three', value: 20, color: '#6A2135' },
+                  { title: 'Four', value: 2, color: 'blue' },
+                  { title: 'Five', value: 1, color: 'gray' }
+                ]}/>
+            </div>
+            <div id="BarChart">
+                <BarChart ylabel='Quantity'
+                  width={300}
+                  height={350}
+                  margin={margin}
+                  data={data}/>
             </div>
         </div>
       );
