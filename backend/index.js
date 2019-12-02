@@ -30,11 +30,11 @@ app.get('/',(req,res)=>{
 //   res.send("Updated game table!");
 // });
 //
-// app.get('/add_into_database',(req,res)=>{
-//   const{ steamid } = req.query;
-//   users_table.API_users_add(steamid);
-//   res.send("You are added!");
-// })
+app.get('/update_user_database',(req,res)=>{
+  const{ steamid } = req.query;
+  users_table.API_users_add(steamid);
+  res.send("You are added!");
+})
 //
 // app.get('/delete_from_database',(req,res)=>{
 //   const{ steamid } = req.query;
@@ -42,7 +42,7 @@ app.get('/',(req,res)=>{
 //   res.send("You are deleted!");
 // })
 //
-app.get('/update_database',(req,res)=>{
+app.get('/update_game_database',(req,res)=>{
   const{ steamid } = req.query;
   games_table.API_get_games(steamid);
   res.send("You are updated!");

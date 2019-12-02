@@ -17,9 +17,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
-import PieChart from 'react-minimal-pie-chart';
+//import PieChart from 'react-minimal-pie-chart';
 
 import BarChart from 'react-bar-chart';
+import PieChart from './pieChart';
 
 const styles = theme => ({
   root: {
@@ -70,39 +71,27 @@ class App extends Component {
     }
   }
 
-  // insert_data = () => {
-  //   console.log(this.state.steamid)
-  //   fetch('http://localhost:4000/add_into_database?steamid=' + this.state.steamid)
-  //   .then(response => response.json())
-  //   .then(response => this.setState({usergames: response.data}))
-  //   .catch(err => console.log(err))
-  //   console.log(this.state.usergames[0])
-  //   if (this.state.usergames === undefined) {
-  //     this.setState({invalidInput: true})
-  //   } else {
-  //     this.setState({invalidInput: false})
-  //   }
-  // }
-
-  // delete_data = () => {
-  //   console.log(this.state.steamid)
-  //   fetch('http://localhost:4000/delete_from_database?steamid=' + this.state.steamid)
-  //   .then(response => response.json())
-  //   .then(response => this.setState({usergames: response.data}))
-  //   .catch(err => console.log(err))
-  //   console.log(this.state.usergames[0])
-  //   if (this.state.usergame === undefined) {
-  //     this.setState({invalidInput: true})
-  //   } else {
-  //     this.setState({invalidInput: false})
-  //   }
-  // }
-  //
-  update_data = () => {
+  update_user_database = () => {
     console.log(this.state.steamid)
-    fetch('http://localhost:4000/update_database?steamid=' + this.state.steamid)
+    fetch('http://localhost:4000/update_user_database?steamid=' + this.state.steamid)
+    .then(response => response.json())
+    .then(response => this.setState({usergames: response.data}))
+    .then(response => this.update_game_database)
     .catch(err => console.log(err))
+    console.log(this.state.usergames[0])
+    if (this.state.usergames === undefined) {
+      this.setState({invalidInput: true})
+    } else {
+      this.setState({invalidInput: false})
+    }
   }
+
+  update_game_database = () => {
+    fetch('http://localhost:4000/update_game_database?steamid=' + this.state.steamid)
+    .catch(err => console.log(err))
+    console.log(this.state.steamid)
+  }
+
 
   render() {
     const {steamid} = this.state
@@ -111,7 +100,6 @@ class App extends Component {
     this.play_time = ""
     this.worth = ""
     this.table = []
-    //this.state.usergames.length !== 0
     if(true){
       console.log(this.state)
       if(this.state.usergames.length !== 0){
@@ -145,7 +133,7 @@ class App extends Component {
               <Button id="search_button_2_detail" variant="contained" color="primary" onClick={this.game_data}>Search</Button>
             </div>
             <div id="update_button_2" >
-              <Button id="update_button_2_detail" variant="contained" color="primary" onClick={this.update_data}>Update</Button>
+              <Button id="update_button_2_detail" variant="contained" color="primary" onClick={this.update_user_database}>Update</Button>
             </div>
             <div id="avatar">
               <Avatar alt="Photo" src="./pure.png" />
@@ -200,14 +188,7 @@ class App extends Component {
               </Table>
             </div>
             <div id="PieChart">
-              <PieChart radius={40}
-                data={[
-                  { title: 'One', value: 10, color: '#E38627' },
-                  { title: 'Two', value: 15, color: '#C13C37' },
-                  { title: 'Three', value: 20, color: '#6A2135' },
-                  { title: 'Four', value: 2, color: 'blue' },
-                  { title: 'Five', value: 1, color: 'gray' }
-                ]}/>
+              <PieChart />
             </div>
             <div id="BarChart">
                 <BarChart ylabel='Quantity'
