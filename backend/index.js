@@ -21,18 +21,56 @@ app.use(cors());
 app.get('/update_user_database',(req,res)=>{
   const{ steamid } = req.query;
   users_table.API_users_add(steamid);
+  games_table.API_get_games(steamid);
   res.send("You are added!");
 })
-app.get('/update_game_database',(req,res)=>{
-  const{ steamid } = req.query;
-  games_table.API_get_games(steamid);
-  res.send("You are updated!");
-})
+// app.get('/update_game_database',(req,res)=>{
+//   const{ steamid } = req.query;
+//   games_table.API_get_games(steamid);
+//   res.send("You are updated!");
+// })
 
 
 app.get('/search', (req, res) => {
   const {steamid} = req.query;
-  const VIEW_GAMES_FOR_ID_QUERY = "SELECT COUNT(GameId) FROM STEAMINING.USERS WHERE SteamId64 = " + steamid + " GROUP BY SteamId64; SELECT SUM(PlayTime) FROM STEAMINING.USERS WHERE SteamId64 = " + steamid + " GROUP BY SteamId64; SELECT SUM(G.price) FROM STEAMINING.USERS as U, (SELECT DISTINCT appid, price FROM STEAMINING.GAMES) as G WHERE U.GameId = G.appid and U.SteamId64 = " + steamid + " GROUP BY U.SteamId64; SELECT G.name, U.PlayTime FROM STEAMINING.USERS as U, (SELECT DISTINCT appid, name FROM STEAMINING.GAMES) as G WHERE U.GameId = G.appid and U.SteamId64 = " + steamid + " ORDER BY U.PlayTime DESC Limit 5;"
+  const VIEW_GAMES_FOR_ID_QUERY = "\
+  SELECT COUNT(GameId) \
+  FROM STEAMINING.USERS \
+  WHERE SteamId64 = " + steamid + " \
+  GROUP BY SteamId64; SELECT SUM(PlayTime)\
+  FROM STEAMINING.USERS WHERE SteamId64 = " + steamid + " \
+  GROUP BY SteamId64; \
+  SELECT SUM(G.price) \
+  FROM STEAMINING.USERS as U, (SELECT DISTINCT appid, price FROM STEAMINING.GAMES) as G \
+  WHERE U.GameId = G.appid and U.SteamId64 = " + steamid + " \
+  GROUP BY U.SteamId64; \
+  SELECT G.name, U.PlayTime \
+  FROM STEAMINING.USERS as U, (SELECT DISTINCT appid, name FROM STEAMINING.GAMES) as G\
+  WHERE U.GameId = G.appid and U.SteamId64 = " + steamid + " \
+  ORDER BY U.PlayTime DESC Limit 5; \
+  SELECT COUNT(GameId) \
+  FROM STEAMINING.USERS \
+  WHERE SteamId64 = " + steamid + " and PlayTime > 6000; \
+  SELECT COUNT(GameId) \
+  FROM STEAMINING.USERS \
+  WHERE SteamId64 = " + steamid + " and PlayTime > 3000 and PlayTime <= 6000; \
+  SELECT COUNT(GameId) \
+  FROM STEAMINING.USERS \
+  WHERE SteamId64 = " + steamid + " and PlayTime > 60 and PlayTime <= 3000; \
+  SELECT COUNT(GameId) \
+  FROM STEAMINING.USERS \
+  WHERE SteamId64 = " + steamid + " and PlayTime > 0 and PlayTime <= 600; \
+  SELECT COUNT(GameId) \
+  FROM STEAMINING.USERS \
+  WHERE SteamId64 = " + steamid + " and PlayTime = 0; \
+  SELECT avatar \
+  FROM STEAMINING.INFO \
+  WHERE SteamId64 = " + steamid + "; \
+  SELECT UserName \
+  FROM STEAMINING.INFO \
+  WHERE SteamId64 = " + steamid + "; \
+  "
+
   con.query(VIEW_GAMES_FOR_ID_QUERY, (err, results) => {
     if(err) {return res.send(err)}
     else {

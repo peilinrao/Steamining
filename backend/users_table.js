@@ -53,13 +53,15 @@ module.exports = {
       var sql = "";
       username = responseOne.response.players[0].personaname;
       steamId64 = responseOne.response.players[0].steamid;
+      avatar = responseOne.response.players[0].avatarfull;
       if(responseTwo.response.length == 0){
         throw new Error('The user have no game! We do not have to do anything for him');
       };
       for (var i = 0; i < responseTwo.response.games.length; i++){
-        sql+= "INSERT INTO STEAMINING.USERS(SteamId64, UserName, GameId, PlayTime) values (\""+steamId64+"\",\""+username+"\","+responseTwo.response.games[i].appid+","+responseTwo.response.games[i].playtime_forever+") ON DUPLICATE KEY UPDATE PlayTime = "+responseTwo.response.games[i].playtime_forever+";"
+        sql+= "INSERT INTO STEAMINING.USERS(SteamId64, GameId, PlayTime) values (\""+steamId64+"\","+responseTwo.response.games[i].appid+","+responseTwo.response.games[i].playtime_forever+") ON DUPLICATE KEY UPDATE PlayTime = "+responseTwo.response.games[i].playtime_forever+";"
       }
-
+      var safename = username.replace("\"", " ").replace("\'", " ")
+      sql += "INSERT INTO STEAMINING.INFO(SteamId64, UserName, Avatar) values (\""+steamId64+"\",\""+safename+"\",\""+avatar+"\") ON DUPLICATE KEY UPDATE avatar = \""+avatar+"\";"
       console.log(sql);
       con.connect(function(err) {
         if (err) throw err;

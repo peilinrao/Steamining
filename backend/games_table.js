@@ -64,15 +64,15 @@ module.exports = {
         curr_appid = appid_list[i].appid;
         console.log("requested:"+curr_appid);
         await APIGetAppInfo(curr_appid).then(function(result){
-          if (Object.keys(result.tags).length != 0){
-            for(var t = 0; t < Object.keys(result.tags).length; t++){
+
+              var safename = result.name.replace(/"/g, "");.replace(/'/g, "");
+
               sql += "INSERT IGNORE INTO STEAMINING.GAMES(appid,name, developer, publisher,positive, negative,"+
-              "owners, average_forever, price, init_price, discount, tag, tag_weight)"+
-              "values (\""+result.appid+"\",\""+result.name+"\",\""+result.developer+"\", \""+result.publisher+"\", "+result.positive+", "+result.negative+", \""+result.owners+"\", "+
+              "owners, average_forever, price, init_price, discount)"+
+              "values (\""+result.appid+"\",\""+safename+"\",\""+result.developer+"\", \""+result.publisher+"\", "+result.positive+", "+result.negative+", \""+result.owners+"\", "+
               result.average_forever+", "+result.price+","+
-              result.initialprice+","+result.discount+",\""+Object.keys(result.tags)[t]+"\","+result.tags[Object.keys(result.tags)[t]]+");"
-            }
-          }
+              result.initialprice+","+result.discount+");"
+
           //ON DUPLICATE KEY UPDATE tag_weight = "+result.tags[Object.keys(result.tags)[t]]+";"
         });
       }

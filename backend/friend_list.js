@@ -1,17 +1,5 @@
 module.exports = {
     API_friend_list: function(steamid){
-      // var MongoClient = require('mongodb').MongoClient;
-      // var url = "mongodb://localhost:27017/";
-      // MongoClient.connect(url, function(err, client) {
-      //   if (err) throw err;
-      //   var db = client.db("text");
-      //   var myobj = { name: "Company Inc", address: "Highway 37" };
-      //   db.collection("customers").insertOne(myobj, function(err, res) {
-      //     if (err) throw err;
-      //     console.log("1 document inserted");
-      //     client.close();
-      //   });
-      // });
       console.log("Getting your friends:",steamid)
       const fetch = require('node-fetch')
       key = "AA7FA6275849EC957DF95C8DE0945CB7";
@@ -33,7 +21,6 @@ module.exports = {
             var myobj = { steamid: friend_list[i].steamid, friend_since: friend_list[i].friend_since };
             arr.push(myobj)
           }
-          // console.log(arr)
           var obj = { mysteam: steamid, friend_list:arr};
           console.log(obj);
           db.collection("friend_list").update(obj, function(err, res) {
