@@ -2,6 +2,7 @@ var users_table = require('./users_table');
 var games_table = require('./games_table');
 var visitors_table = require('./visitors_table');
 var friend_list = require('./friend_list');
+var top_game = require('./top_game');
 
 const express = require('express');
 const cors = require('cors');
@@ -18,18 +19,32 @@ var con = mysql.createConnection({
 });
 con.connect(err => {if(err) {return err;}})
 app.use(cors());
-app.get('/update_user_database',(req,res)=>{
+app.get('/update_database',(req,res)=>{
   const{ steamid } = req.query;
   users_table.API_users_add(steamid);
   games_table.API_get_games(steamid);
-  res.send("You are added!");
+  friend_list.API_friend_list(steamid);
 })
-// app.get('/update_game_database',(req,res)=>{
-//   const{ steamid } = req.query;
-//   games_table.API_get_games(steamid);
-//   res.send("You are updated!");
-// })
 
+
+app.get('/show',(req,res)=>{
+  console.log("Getting game news");
+  top_game.API_TopGame();
+  var MongoClient = require('mongodb').MongoClient;
+  var url = "mongodb://localhost:27017/";
+  MongoClient.connect(url, function(err, client) {
+    if (err) throw err;
+    var db = client.db("steamining");
+    //console.log(arr);
+    db.collection("news").aggregate([{$sample:{size:6}}]).toArray().then((docs) =>{
+      return res.json({news_data:docs})
+    }).catch((err)=>{
+      console.log(err);
+    }).finally(()=>{
+      client.close();
+    });
+  });
+})
 
 app.get('/search', (req, res) => {
   const {steamid} = req.query;
@@ -69,6 +84,22 @@ app.get('/search', (req, res) => {
   SELECT UserName \
   FROM STEAMINING.INFO \
   WHERE SteamId64 = " + steamid + "; \
+  SELECT I.SteamId64, I.UserName, I.Avatar \
+  FROM STEAMINING.FRIEND as F, STEAMINING.INFO as I \
+  WHERE F.SteamId64 = "+ steamid +" and I.SteamId64 = F.friendId; \
+  SELECT B.GameId \
+  FROM ( \
+  		SELECT A.GameId, A.PlayTime \
+  		FROM (\
+  				SELECT F.SteamId64, F.friendId, U.GameId, U.PlayTime \
+  				FROM STEAMINING.FRIEND as F JOIN STEAMINING.USERS as U ON (F.friendId = U.SteamId64) \
+  			) as A \
+  		WHERE (A.SteamId64 = "+steamid+") \
+    ) AS B \
+  WHERE B.GameId NOT IN (SELECT GameId FROM STEAMINING.USERS WHERE SteamId64 = "+steamid+") \
+  GROUP BY B.GameId \
+  ORDER BY SUM(B.PlayTime) DESC \
+  LIMIT 6; \
   "
 
   con.query(VIEW_GAMES_FOR_ID_QUERY, (err, results) => {
@@ -84,8 +115,8 @@ app.listen(4000,()=>{
 
 //--------------------------mongodb starts here--------------------------
 
-app.get('/find_my_friends',(req,res)=>{
-  const{ steamid } = req.query;
-  friend_list.API_friend_list(steamid);
-  res.send("Your friends updated!");
-})
+// app.get('/find_my_friends',(req,res)=>{
+//   const{ steamid } = req.query;
+//   friend_list.API_friend_list(steamid);
+//   res.send("Your friends updated!");
+// })

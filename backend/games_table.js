@@ -56,6 +56,7 @@ module.exports = {
 
     async function insert_to_game_table(listOfAll){
       var sql = "";
+      var safe = [];
       console.log(listOfAll);
       appid_list = listOfAll.response.games;
       //appid_list.length
@@ -65,21 +66,27 @@ module.exports = {
         console.log("requested:"+curr_appid);
         await APIGetAppInfo(curr_appid).then(function(result){
 
-              var safename = result.name.replace(/"/g, "");.replace(/'/g, "");
-
+              safe.push(result.appid)
+              safe.push(result.name)
+              safe.push(result.developer)
+              safe.push(result.publisher)
+              safe.push(result.positive)
+              safe.push(result.negative)
+              safe.push(result.owners)
+              safe.push(result.average_forever)
+              safe.push(result.price)
+              safe.push(result.initialprice)
+              safe.push(result.discount)
               sql += "INSERT IGNORE INTO STEAMINING.GAMES(appid,name, developer, publisher,positive, negative,"+
               "owners, average_forever, price, init_price, discount)"+
-              "values (\""+result.appid+"\",\""+safename+"\",\""+result.developer+"\", \""+result.publisher+"\", "+result.positive+", "+result.negative+", \""+result.owners+"\", "+
-              result.average_forever+", "+result.price+","+
-              result.initialprice+","+result.discount+");"
+              "values (?,?,?, ?, ?, ?, ?, ?, ? ,?,?);"
 
-          //ON DUPLICATE KEY UPDATE tag_weight = "+result.tags[Object.keys(result.tags)[t]]+";"
         });
       }
       con.connect(function(err) {
         if (err) throw err;
         console.log("Trying to add a new game into our database.");
-        con.query(sql, function (err, result) { if (err) throw err; console.log("Successfully added");});
+        con.query(sql,safe, function (err, result) { if (err) throw err; console.log("Successfully added");});
       });
 
     }

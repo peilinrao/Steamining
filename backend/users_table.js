@@ -51,6 +51,7 @@ module.exports = {
       console.log("Are we ok with GetPlayerSummaries?:",responseTwo!=null);
 
       var sql = "";
+      var antiinjection = []
       username = responseOne.response.players[0].personaname;
       steamId64 = responseOne.response.players[0].steamid;
       avatar = responseOne.response.players[0].avatarfull;
@@ -58,15 +59,22 @@ module.exports = {
         throw new Error('The user have no game! We do not have to do anything for him');
       };
       for (var i = 0; i < responseTwo.response.games.length; i++){
-        sql+= "INSERT INTO STEAMINING.USERS(SteamId64, GameId, PlayTime) values (\""+steamId64+"\","+responseTwo.response.games[i].appid+","+responseTwo.response.games[i].playtime_forever+") ON DUPLICATE KEY UPDATE PlayTime = "+responseTwo.response.games[i].playtime_forever+";"
+        antiinjection.push(steamId64);
+        antiinjection.push(responseTwo.response.games[i].appid);
+        antiinjection.push(responseTwo.response.games[i].playtime_forever);
+        antiinjection.push(responseTwo.response.games[i].playtime_forever);
+        sql+= "INSERT INTO STEAMINING.USERS(SteamId64, GameId, PlayTime) values (?,?,?) ON DUPLICATE KEY UPDATE PlayTime = ?;"
       }
-      var safename = username.replace("\"", " ").replace("\'", " ")
-      sql += "INSERT INTO STEAMINING.INFO(SteamId64, UserName, Avatar) values (\""+steamId64+"\",\""+safename+"\",\""+avatar+"\") ON DUPLICATE KEY UPDATE avatar = \""+avatar+"\";"
+      antiinjection.push(steamId64);
+      antiinjection.push(username);
+      antiinjection.push(avatar);
+      antiinjection.push(avatar);
+      sql += "INSERT INTO STEAMINING.INFO(SteamId64, UserName, Avatar) values (?,?,?) ON DUPLICATE KEY UPDATE avatar = ?;"
       console.log(sql);
       con.connect(function(err) {
         if (err) throw err;
         console.log("Trying to add a new user into our database.");
-        con.query(sql, function (err, result) { if (err) throw err; console.log("Successfully added");});
+        con.query(sql, antiinjection, function (err, result) { if (err) throw err; console.log("Successfully added");});
       });
 
     }

@@ -1,41 +1,64 @@
-.App {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+@media (min-width: 600px) {
+    .App {
+        margin: 20px;
+        display: grid;
+        grid-column-gap: 20px;
+        grid-row-gap: 20px;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    }
+    #logo_image {
+        grid-column: 5 / 9;
+        grid-row: 2;
+        place-self: stretch;
+    }
+    #search_field {
+      grid-column: 4 / 9;
+      grid-row: 3;
+      justify-self: stretch;
+      align-self: center;
+    }
+    #search_button {
+      grid-column: 9;
+      grid-row: 3;
+      place-self: center;
+    }
+    #Top_Game {
+      grid-column: span 12;
+      grid-row: 4 / 8;
+      place-self: stretch;
+    }
+    #not_found {
+      grid-column: 3 / 11;
+      grid-row: 2;
+      place-self: center;
+    }
+    #not_found_detail {
+      grid-column: 5 / 9;
+      grid-row: 3;
+      place-self: center;
+    }
+    #return_button {
+      grid-column: 5 / 9;
+      grid-row: 7;
+      justify-self: center;
+      align-self: end;
+    }
 }
 
 .App-logo {
   height: 40vmin;
 }
 
-#logo_image {
+#logo_image_detail {
   margin: auto;
   max-width:100%;
-  width: 60%;
-  height: auto;
 }
 
-#search_field {
+#search_field_dup {
   width: 500px;
 }
 
-#search_button {
+#search_button_dup {
   height: 56px;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #09d3ac;
 }

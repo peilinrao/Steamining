@@ -4,20 +4,36 @@ import { makeStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { FixedSizeList } from 'react-window';
+import Divider from '@material-ui/core/Divider';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
   },
+  inline: {
+    display: 'inline',
+
+  }
 }));
 
 function renderRow(props) {
-  const { index, style } = props;
-
+  const { index, style, data } = props;
+  console.log(data['friend'][0].Avatar);
   return (
-    <ListItem button style={style} key={index}>
-      <ListItemText primary={`Item ${index + 1}`} />
-    </ListItem>
+    <>
+      <ListItem alignItems="flex-start" style={style}>
+        <ListItemAvatar>
+          <Avatar alt="Remy Sharp" src={data['friend'][index].Avatar} />
+        </ListItemAvatar>
+        <ListItemText
+          primary={data['friend'][index].UserName}
+          secondary={data['friend'][index].SteamId64} />
+      </ListItem>
+
+    </>
   );
 }
 
@@ -26,12 +42,11 @@ renderRow.propTypes = {
   style: PropTypes.object.isRequired,
 };
 
-export default function FriendList() {
+export default function FriendList(props) {
   const classes = useStyles();
-
   return (
     <div className={classes.root}>
-      <FixedSizeList height={400} width={520} itemSize={46} itemCount={10}>
+      <FixedSizeList height={570} itemSize={57} itemCount={props.friend.length} itemData={{friend: props.friend}}>
         {renderRow}
       </FixedSizeList>
     </div>
