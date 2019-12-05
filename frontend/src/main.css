@@ -55,11 +55,11 @@
     #FriendList_firRow {
         display: inline-block;
     }
-    #Recommendation {
+    .Recommendation {
         grid-column: span 9;
         place-self: stretch;
     }
-    #recom_list > div {
+    .recom_list > div {
         display: inline-block;
     }
 }

@@ -26,6 +26,11 @@ app.get('/update_database',(req,res)=>{
   friend_list.API_friend_list(steamid);
 })
 
+app.get('/delete',(req,res)=>{
+  const{ steamid } = req.query;
+  users_table.API_users_delete(steamid);
+})
+
 
 app.get('/show',(req,res)=>{
   console.log("Getting game news");
@@ -84,9 +89,11 @@ app.get('/search', (req, res) => {
   SELECT UserName \
   FROM STEAMINING.INFO \
   WHERE SteamId64 = " + steamid + "; \
+  \
   SELECT I.SteamId64, I.UserName, I.Avatar \
   FROM STEAMINING.FRIEND as F, STEAMINING.INFO as I \
   WHERE F.SteamId64 = "+ steamid +" and I.SteamId64 = F.friendId; \
+  \
   SELECT B.GameId \
   FROM ( \
   		SELECT A.GameId, A.PlayTime \
@@ -100,7 +107,16 @@ app.get('/search', (req, res) => {
   GROUP BY B.GameId \
   ORDER BY SUM(B.PlayTime) DESC \
   LIMIT 6; \
+  \
+  SELECT appid \
+  FROM STEAMINING.GAMES \
+  WHERE STEAMINING.GAMES.appid not in (SELECT GameId FROM STEAMINING.USERS WHERE SteamId64 = "+steamid+") \
+  ORDER BY ((positive - negative)*0.45 + average_forever*0.45 + discount*0.1) DESC \
+  LIMIT 6 \
   "
+
+  //Data base stored procedure:
+
 
   con.query(VIEW_GAMES_FOR_ID_QUERY, (err, results) => {
     if(err) {return res.send(err)}

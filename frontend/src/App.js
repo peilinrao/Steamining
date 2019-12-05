@@ -77,7 +77,10 @@ class App extends Component {
   state = {
     steamid: '',
     usergames: [],
-    news:[]
+    news:[],
+    login:0,
+    admin:'',
+    toDelete:''
   }
 
   game_data = () => {
@@ -108,6 +111,19 @@ class App extends Component {
     }
   }
 
+  showlogin = () => {
+    this.setState({login: 1})
+  }
+
+  adminDelete = () => {
+    if (this.state.admin == 'TheGreatSteaminer') {
+      fetch('http://localhost:4000/delete?steamid=' + this.state.toDelete)
+      .then(response => response.json()).catch(err=>console.log(err))
+      console.log("Deleted")
+    }
+    this.setState({admin: '', login: 0, toDelete: ''})
+  }
+
   // No longer needs because its emerged with update_user_database in backend calls
   // update_game_database = () => {
   //   console.log("I AM UPDATING GAMES!")
@@ -131,6 +147,7 @@ class App extends Component {
     this.friend = []
     this.popularGame = []
     this.newsGame = []
+    this.dbGame = []
     if(this.state.news.length===0){
       this.get_news()
     }else{
@@ -186,6 +203,12 @@ class App extends Component {
       this.username = this.state.usergames[10]["0"]["UserName"];
       this.friend = this.state.usergames[11];
       this.popularGame = this.state.usergames[12];
+      console.log(this.state.usergames)
+      var k = 0;
+      for(k = 0; k < 6; k++){
+        this.dbGame.push(this.state.usergames[13][k]["appid"])
+      }
+
       return (
 
         <div className="main">
@@ -290,13 +313,13 @@ class App extends Component {
               </Paper>
             </div>
 
-            <div id="Recommendation">
+            <div className="Recommendation">
             <Zoom in={true}>
               <Paper className={classes.recom_list}>
                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                  Games We think You Would Like:
+                  Most Popuar Among Friends:
                 </Typography>
-                <div  id="recom_list" style={{'padding-top': 40, 'text-align': 'center'}}>
+                <div  className="recom_list" style={{'padding-top': 40, 'text-align': 'center'}}>
                   <div style={{'padding-right': 20}}>
                     <MediaCard appid = {this.popularGame[0] === undefined ? '' : this.popularGame[0]["GameId"]}/>
                   </div>
@@ -319,13 +342,42 @@ class App extends Component {
               </Paper>
             </Zoom>
             </div>
+            <div className="Recommendation">
+            <Zoom in={true}>
+              <Paper className={classes.recom_list}>
+                <Typography component="h2" variant="h6" color="primary" gutterBottom>
+                  Games We think You Would Like:
+                </Typography>
+                <div  className="recom_list" style={{'padding-top': 40, 'text-align': 'center'}}>
+                  <div style={{'padding-right': 20}}>
+                    <MediaCard appid = {this.dbGame[0] === undefined ? '' : this.dbGame[0]}/>
+                  </div>
+                  <div style={{'padding-right': 20}}>
+                    <MediaCard appid = {this.dbGame[1] === undefined ? '' : this.dbGame[1]}/>
+                  </div>
+                  <div>
+                    <MediaCard appid = {this.dbGame[2] === undefined ? '' : this.dbGame[2]}/>
+                  </div>
+                  <div style={{'padding-right': 20, 'padding-top': 20}}>
+                    <MediaCard appid = {this.dbGame[3] === undefined ? '' : this.dbGame[3]}/>
+                  </div>
+                  <div style={{'padding-right': 20, 'padding-top': 20}}>
+                    <MediaCard appid = {this.dbGame[4] === undefined ? '' : this.dbGame[4]}/>
+                  </div>
+                  <div style={{'padding-top': 20}}>
+                    <MediaCard appid = {this.dbGame[5] === undefined ? '' : this.dbGame[5]}/>
+                  </div>
+                </div>
+              </Paper>
+            </Zoom>
+            </div>
         </div>
       );
     }else{
       return (
         <div className="App">
           <div id="logo_image">
-            <img src="./logo.jpeg" alt="logo" id="logo_image_detail"/>
+            <img src="./logo.jpeg" alt="logo" id="logo_image_detail" onClick={this.showlogin}/>
           </div>
           <div id="search_field">
             <TextField error={this.state.invalidInput} helperText={this.state.invalidInput ? 'Invalid Steam ID' : ''} label="Steam ID" variant="outlined" fullWidth
@@ -336,13 +388,20 @@ class App extends Component {
           <div id="search_button">
             <Button variant="contained" color="primary" onClick={this.game_data}>Search</Button>
           </div>
+          {this.state.login==1 &&
+            <div>
+            <TextField label="secrete code" onChange={e => this.setState({admin: e.target.value})}/>
+            <TextField label="steamid" onChange={e => this.setState({toDelete: e.target.value})}/>
+            <Button variant="contained" color="gray" onClick={this.adminDelete}>Delete</Button>
+            </div>
+          }
           <div id="Top_Game">
             <Zoom in={true}>
               <Paper className={classes.top_game_list}>
                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
                   Trending Now
                 </Typography>
-                <div  id="recom_list" style={{'padding-top': 30, 'text-align': 'center'}}>
+                <div  className="recom_list" style={{'padding-top': 30, 'text-align': 'center'}}>
                   <div style={{'padding-right': 20}}>
                     <MediaCard appid = {this.newsGame[0] === undefined ? '' : this.newsGame[0]}/>
                   </div>
