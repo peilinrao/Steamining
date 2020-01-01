@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ApexCharts from 'react-apexcharts'
 
 class DonutChart extends React.Component {

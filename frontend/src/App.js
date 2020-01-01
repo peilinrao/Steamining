@@ -3,14 +3,11 @@ import './App.css';
 import './main.css';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import { Container, Row, Col } from 'reactstrap';
 import Avatar from '@material-ui/core/Avatar';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
-
-import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -20,7 +17,6 @@ import Zoom from "@material-ui/core/Zoom";
 
 //import PieChart from 'react-minimal-pie-chart';
 
-import BarChart from 'react-bar-chart';
 import ApexCharts from './PieCharts';
 import FriendList from './FriendList';
 import MediaCard from './RecommendationList';
@@ -55,23 +51,6 @@ const styles = theme => ({
 function createData(name, time) {
   return { name, time };
 }
-
-const rows = [
-  createData('game1', 100),
-  createData('game2', 50),
-  createData('game3', 20),
-  createData('game4', 10),
-  createData('game5', 5),
-];
-
-const data = [
-  {text: '0-20', value: 200},
-  {text: '20-40', value: 400},
-  {text: '40-60', value: 400},
-  {text: '60+', value: 200},
-];
-
-const margin = {top: 20, right: 20, bottom: 30, left: 40};
 
 class App extends Component {
   state = {
@@ -116,7 +95,7 @@ class App extends Component {
   }
 
   adminDelete = () => {
-    if (this.state.admin == 'TheGreatSteaminer') {
+    if (this.state.admin === 'TheGreatSteaminer') {
       fetch('http://localhost:4000/delete?steamid=' + this.state.toDelete)
       .then(response => response.json()).catch(err=>console.log(err))
       console.log("Deleted")
@@ -151,8 +130,7 @@ class App extends Component {
     if(this.state.news.length===0){
       this.get_news()
     }else{
-      var i;
-      for (i=0; i<6; i++){
+      for (var i=0; i<6; i++){
         this.newsGame.push(this.state.news[i]["appid"])
       }
     }
@@ -183,19 +161,18 @@ class App extends Component {
       this.game_num = (parseFloat(this.state.usergames[0]["0"]["COUNT(GameId)"])).toString()
       this.play_time = (parseFloat(this.state.usergames[1]["0"]["SUM(PlayTime)"])/60.0).toFixed(2).toString()+"h"
       this.worth = "$"+(parseFloat(this.state.usergames[2]["0"]["SUM(G.price)"])/100.0).toFixed(2).toString()
-      var i;
-      for (i = 0; i < this.state.usergames[3].length; i++) {
-        var myname = this.state.usergames[3][i]["name"]
-        var myplaytime =  (parseFloat(this.state.usergames[3][i]["PlayTime"])/60).toFixed(2) + "h"
+      for (var j = 0; j < this.state.usergames[3].length; j++) {
+        var myname = this.state.usergames[3][j]["name"]
+        var myplaytime =  (parseFloat(this.state.usergames[3][j]["PlayTime"])/60).toFixed(2) + "h"
 
         this.table.push(createData(myname, myplaytime))
       }
 
       //From resultss 4-8
       var limit_of_donuts = 5
-      var j = 0
-      for (j = 0; j < limit_of_donuts; j++){
-        var number = parseInt(this.state.usergames[4+j]["0"]["COUNT(GameId)"])
+      var l = 0
+      for (l = 0; l < limit_of_donuts; l++){
+        var number = parseInt(this.state.usergames[4+l]["0"]["COUNT(GameId)"])
         this.donut.push(number)
       }
 
@@ -278,7 +255,7 @@ class App extends Component {
                   Your Friends
                 </Typography>
                 <p></p>
-                <div style={{'padding-right':60, 'padding-left':60}}>
+                <div style={{'paddingRight':60, 'paddingLeft':60}}>
                 <FriendList friend = {this.friend}/>
                 </div>
               </Paper>
@@ -317,25 +294,25 @@ class App extends Component {
             <Zoom in={true}>
               <Paper className={classes.recom_list}>
                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                  Most Popuar Among Friends:
+                  Most Popular Among Friends:
                 </Typography>
-                <div  className="recom_list" style={{'padding-top': 40, 'text-align': 'center'}}>
-                  <div style={{'padding-right': 20}}>
+                <div  className="recom_list" style={{'paddingTop': 40, 'textAlign': 'center'}}>
+                  <div style={{'paddingRight': 20}}>
                     <MediaCard appid = {this.popularGame[0] === undefined ? '' : this.popularGame[0]["GameId"]}/>
                   </div>
-                  <div style={{'padding-right': 20}}>
+                  <div style={{'paddingRight': 20}}>
                     <MediaCard appid = {this.popularGame[1] === undefined ? '' : this.popularGame[1]["GameId"]}/>
                   </div>
                   <div>
                     <MediaCard appid = {this.popularGame[2] === undefined ? '' : this.popularGame[2]["GameId"]}/>
                   </div>
-                  <div style={{'padding-right': 20, 'padding-top': 20}}>
+                  <div style={{'paddingRight': 20, 'paddingTop': 20}}>
                     <MediaCard appid = {this.popularGame[3] === undefined ? '' : this.popularGame[3]["GameId"]}/>
                   </div>
-                  <div style={{'padding-right': 20, 'padding-top': 20}}>
+                  <div style={{'paddingRight': 20, 'paddingTop': 20}}>
                     <MediaCard appid = {this.popularGame[4] === undefined ? '' : this.popularGame[4]["GameId"]}/>
                   </div>
-                  <div style={{'padding-top': 20}}>
+                  <div style={{'paddingTop': 20}}>
                     <MediaCard appid = {this.popularGame[5] === undefined ? '' : this.popularGame[5]["GameId"]}/>
                   </div>
                 </div>
@@ -348,23 +325,23 @@ class App extends Component {
                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
                   Games We think You Would Like:
                 </Typography>
-                <div  className="recom_list" style={{'padding-top': 40, 'text-align': 'center'}}>
-                  <div style={{'padding-right': 20}}>
+                <div  className="recom_list" style={{'paddingTop': 40, 'textAlign': 'center'}}>
+                  <div style={{'paddingRight': 20}}>
                     <MediaCard appid = {this.dbGame[0] === undefined ? '' : this.dbGame[0]}/>
                   </div>
-                  <div style={{'padding-right': 20}}>
+                  <div style={{'paddingRight': 20}}>
                     <MediaCard appid = {this.dbGame[1] === undefined ? '' : this.dbGame[1]}/>
                   </div>
                   <div>
                     <MediaCard appid = {this.dbGame[2] === undefined ? '' : this.dbGame[2]}/>
                   </div>
-                  <div style={{'padding-right': 20, 'padding-top': 20}}>
+                  <div style={{'paddingRight': 20, 'paddingTop': 20}}>
                     <MediaCard appid = {this.dbGame[3] === undefined ? '' : this.dbGame[3]}/>
                   </div>
-                  <div style={{'padding-right': 20, 'padding-top': 20}}>
+                  <div style={{'paddingRight': 20, 'paddingTop': 20}}>
                     <MediaCard appid = {this.dbGame[4] === undefined ? '' : this.dbGame[4]}/>
                   </div>
-                  <div style={{'padding-top': 20}}>
+                  <div style={{'paddingTop': 20}}>
                     <MediaCard appid = {this.dbGame[5] === undefined ? '' : this.dbGame[5]}/>
                   </div>
                 </div>
@@ -388,7 +365,7 @@ class App extends Component {
           <div id="search_button">
             <Button variant="contained" color="primary" onClick={this.game_data}>Search</Button>
           </div>
-          {this.state.login==1 &&
+          {this.state.login === 1 &&
             <div>
             <TextField label="secrete code" onChange={e => this.setState({admin: e.target.value})}/>
             <TextField label="steamid" onChange={e => this.setState({toDelete: e.target.value})}/>
@@ -401,27 +378,27 @@ class App extends Component {
                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
                   Trending Now
                 </Typography>
-                <div  className="recom_list" style={{'padding-top': 30, 'text-align': 'center'}}>
-                  <div style={{'padding-right': 20}}>
+                <div  className="recom_list" style={{'paddingTop': 30, 'textAlign': 'center'}}>
+                  <div style={{'paddingRight': 20}}>
                     <MediaCard appid = {this.newsGame[0] === undefined ? '' : this.newsGame[0]}/>
                   </div>
-                  <div style={{'padding-right': 20}}>
+                  <div style={{'paddingRight': 20}}>
                     <MediaCard appid = {this.newsGame[1] === undefined ? '' : this.newsGame[1]}/>
                   </div>
                   <div>
                     <MediaCard appid = {this.newsGame[2] === undefined ? '' : this.newsGame[2]}/>
                   </div>
-                  <div style={{'padding-right': 20, 'padding-top': 20}}>
+                  <div style={{'paddingRight': 20, 'paddingTop': 20}}>
                     <MediaCard appid = {this.newsGame[3] === undefined ? '' : this.newsGame[3]}/>
                   </div>
-                  <div style={{'padding-right': 20, 'padding-top': 20}}>
+                  <div style={{'paddingRight': 20, 'paddingTop': 20}}>
                     <MediaCard appid = {this.newsGame[4] === undefined ? '' : this.newsGame[4]}/>
                   </div>
-                  <div style={{'padding-top': 20}}>
+                  <div style={{'paddingTop': 20}}>
                     <MediaCard appid = {this.newsGame[5] === undefined ? '' : this.newsGame[5]}/>
                   </div>
                 </div>
-                <div style={{'text-align': 'center', 'padding-top': 30}}>
+                <div style={{'textAlign': 'center', 'paddingTop': 30}}>
                   <Button variant="contained" color="primary" onClick={()=>this.setState({news: []})}>Change</Button>
                 </div>
               </Paper>
